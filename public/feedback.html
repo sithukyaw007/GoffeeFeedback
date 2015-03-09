@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+  <!-- <link rel="stylesheet" href = "http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"> -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.95.3/css/materialize.min.css">
+
+  <script src= "http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+  <script src="https://cdn.firebase.com/js/client/2.0.4/firebase.js"></script>
+  <script src="https://cdn.firebase.com/libs/angularfire/0.8.0/angularfire.min.js"></script>
+
+</head>
+
+<body ng-controller="userController">
+  <div class="container">
+  <div class="row">
+    <div class="row">
+      <div class="col s12 m4 l2"><img src="/public/image/logo.png" height="80px" /></div>
+      <div class="s12 m4 l10">  <h3 class="center-align">GoffeeApp Feedback Form</h3>
+  <p class="lead center-align">Hey there, thank you for giving us the feedback</p></div>
+    </div>
+  </div>
+
+
+    <hr />
+    Click here to open our application in another tab<br>
+    Click here to watch our overview video.<br>
+
+    <!-- Show this div when the users is logged in -->
+    <div ng-show="currentUser">
+      You are logged in as: {{currentUser.github.displayName}} <br><br>
+      <button class="btn btn-success" ng-click="editFeedback('new')">
+        <span class="glyphicon"></span>Click here to leave feedback.
+      </button>
+      <button class="btn btn-success" ng-click="logout()">
+        <span class="glyphicon"></span>Logout </button>
+      </div>
+
+      <!-- Show this div when the user is not logged in -->
+      <div ng-hide="currentUser">
+        <button class="btn btn-success" ng-click="login('google')">
+          <span class="glyphicon glyphicon-user"></span>Login to leave feedback.
+        </button>
+      </div>
+
+    <hr />
+<br  />
+<div ng-show="currentUser">
+ <h5 ng-show="edit"><b>Leave Your Feedback</b></h5>
+    <h3 ng-hide="edit">Edit User:</h3>
+
+    <form class="form-horizontal">
+      <div class="form-group">
+        <i class="mdi-action-account-circle prefix"></i>
+        <label class="col-sm-2 control-label">First Name:</label>
+        <div class="col-sm-10">
+          <input type="text" ng-model="newuser.fName" ng-disabled="!edit" placeholder="First Name">
+        </div>
+      </div>
+      <div class="form-group">
+        <i class="mdi-action-account-circle prefix"></i>
+        <label class="col-sm-2 control-label">Last Name:</label>
+        <div class="col-sm-10">
+          <input type="text" ng-model="newuser.lName" ng-disabled="!edit" placeholder="Last Name">
+        </div>
+      </div>
+      <div class="form-group">
+        <i class="mdi-social-school"></i>
+        <label class="col-sm-2 control-label">School:</label>
+        <div class="col-sm-10">
+          <input type="text" ng-model="newuser.school" ng-disabled="!edit" placeholder="School (e.g SOB)">
+        </div>
+      </div>
+      <div class="form-group">
+        <i class="mdi-communication-email"></i>
+        <label class="col-sm-2 control-label">Email:</label>
+        <div class="col-sm-10">
+          <input type="text" ng-model="newuser.email" ng-disabled="!edit" placeholder="SMU Email">
+        </div>
+      </div>
+      <div class="form-group">
+        <i class="mdi-communication-textsms"></i>
+        <label class="col-sm-2 control-label">Feedback:</label>
+        <div class="col-sm-10">
+          <textarea rows="4" ng-model="newuser.feedback" ng-disabled="!edit" placeholder="Feedback"></textarea>
+        </div>
+      </div>
+
+    </form>
+
+    <hr>
+
+<!--     <button class="btn btn-success"  ng-click="editUser(new)">
+    <i class="mdi-av-replay left"></i>Reset
+   </button> -->
+
+
+    <button class="btn btn-success" ng-click="editUser('new')">
+      <i class="mdi-content-add-circle left"></i> Leave New Feedback
+    </button>
+
+    <button class="btn btn-success"  ng-click="save()">
+     <i class="mdi-content-save left"></i>Save Feedback
+   </button>
+
+    <hr />
+    <br />
+    <h5><b>Feedbacks</b></h5>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>No.</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>School</th>
+          <th>Email</th>
+          <th>Feedback</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="user in users">
+          <td>{{ $index + 1 }} </td>
+          <td>{{ user.fName }}</td>
+          <td>{{ user.lName }}</td>
+          <td>{{ user.school }}</td>
+          <td>{{ user.email }} </td>
+          <td>{{ user.feedback }} </td>
+          <td>
+            <button class="btn" ng-click="editUser(user.$id)">
+              <span class="glyphicon glyphicon-pencil"></span>  Edit
+            </button>
+          </td>
+          <td>
+            <button class="btn" ng-click="deleteUser($index)">
+              <i  class="mdi-action-delete left"></i>Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+<div>
+    <hr>
+    Previous team feedback form <a href="http://www.google.com" target="_blank">here</a>.
+    <br />
+    Next team feedback form <a href="http://www.google.com"> here</a>.
+
+    <p class="lead">Thank you for visiting the page and feedback.<a href="http://is429-sithu-paypal.herokuapp.com/">Click</a> here to proceed to the payment page.</p>
+  </div>
+
+
+  <script>
+   var myApp = angular.module("myApp", ["firebase"]);
+   myApp.controller('userController', ['$scope', '$firebase',
+
+    function($scope, $firebase) {
+      $scope.newuser = {};
+      $scope.fName = '';
+      $scope.lName = '';
+      $scope.passw1 = '';
+      $scope.passw2 = '';
+      $scope.school = '';
+      $scope.email = '';
+      $scope.feedback = '';
+
+    //We can replace this with a Firebase url later on.
+    var ref = new Firebase("https://feeback.firebaseio.com/");
+    $scope.users = $firebase(ref.child("user")).$asArray();
+    /*
+    $scope.users = [
+        {id:1, fName:'Hege'  , lName:"Pege" },
+        {id:2, fName:'Kim'   , lName:"Pim" },
+        {id:3, fName:'Jack'  , lName:"Jones" },
+        {id:4, fName:'John'  , lName:"Doe" },
+        {id:5, fName:'Peter' , lName:"Pan" }
+    ];
+    */
+
+    $scope.edit = true;
+    $scope.error = false;
+    $scope.incomplete = false;
+
+
+    $scope.editUser = function(id) {
+      $scope.currentId = id;
+      if (id == 'new') {
+        $scope.edit = true;
+        $scope.incomplete = true;
+        $scope.newuser.fName = '';
+        $scope.newuser.lName = '';
+        $scope.newuser.school = '';
+        $scope.newuser.email = '';
+        $scope.newuser.feedback = '';
+        console.log("new user.");
+      } else {
+        $scope.edit = true;
+        $scope.newuser = $firebase(ref.child("user").child(id)).$asObject();
+        console.log("existing user.");
+      }
+    };
+
+    $scope.save = function(){
+      //Add new if no index is passed in.
+
+      if($scope.currentId=='new'){
+        //Using the array length as the next index while prototyping.
+        $scope.users.$add($scope.newuser);
+      }
+      else{
+        $scope.newuser.$save();
+      }
+    };
+
+     $scope.currentUser = null;
+    //Check to see if the users is already logged in to Firebase and update currentUser if yes.
+    var authData = ref.getAuth();
+      if (authData && authData!={}) {
+          $scope.currentUser = $firebase(ref.child("user").child(authData.uid)).$asObject();
+      } else {
+          console.log("User is logged out");
+      }
+
+    $scope.logout = function(loginProvider){
+        $scope.currentUser = null;
+    }
+
+    $scope.login = function(loginProvider){
+          ref.authWithOAuthPopup(loginProvider, function(error, authData) {
+            if (error) {
+              console.log("Login Failed!", error);
+            } else {
+              console.log("Authenticated successfully with payload:", authData);
+              //Add the user to the users list.
+              ref.child("user/"+authData.uid).transaction(function(currentValue) {
+                  return authData;
+                });
+              $scope.currentUser = $firebase(ref.child("user").child(authData.uid)).$asObject();
+              $scope.users = $firebase(ref.child("feedback")).$asArray();
+            }
+          });
+        }
+
+    $scope.deleteUser = function(index){
+      $scope.users.$remove(index);
+      console.log("removing "+index);
+    }
+
+  }]);
+
+</script>
+  <!--Here is a way to take a quick peek at your data.
+  Users: {{users}}<br>
+  newuser: {{newuser}}
+-->
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-55493881-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
