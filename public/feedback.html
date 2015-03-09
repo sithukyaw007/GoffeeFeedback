@@ -26,27 +26,30 @@
     Click here to watch our overview video.<br>
 
     <!-- Show this div when the users is logged in -->
-    <div ng-show="currentUser">
+    <!-- <div>
       You are logged in as: {{currentUser.github.displayName}} <br><br>
       <button class="btn btn-success" ng-click="editFeedback('new')">
         <span class="glyphicon"></span>Click here to leave feedback.
       </button>
       <button class="btn btn-success" ng-click="logout()">
         <span class="glyphicon"></span>Logout </button>
-      </div>
+      </div> -->
 
       <!-- Show this div when the user is not logged in -->
-      <div ng-hide="currentUser">
+<!--       <div ng-hide="currentUser">
         <button class="btn btn-success" ng-click="login('github')">
           <span class="glyphicon glyphicon-user"></span>Login to leave feedback.
         </button>
-      </div>
+      </div> -->
 
     <hr />
 <br  />
-<div ng-show="currentUser">
+<div >
  <h5 ng-show="edit"><b>Leave Your Feedback</b></h5>
-    <h3 ng-hide="edit">Edit User:</h3>
+ <h3 ng-hide="edit">Edit User:</h3>
+ <button class="btn btn-success" ng-click="editUser('new')">
+  <i class="mdi-content-add-circle left"></i> Leave New Feedback
+</button>
 
     <form class="form-horizontal">
       <div class="form-group">
@@ -93,11 +96,6 @@
     <i class="mdi-av-replay left"></i>Reset
    </button> -->
 
-
-    <button class="btn btn-success" ng-click="editUser('new')">
-      <i class="mdi-content-add-circle left"></i> Leave New Feedback
-    </button>
-
     <button class="btn btn-success"  ng-click="save()">
      <i class="mdi-content-save left"></i>Save Feedback
    </button>
@@ -127,12 +125,12 @@
           <td>{{ user.feedback }} </td>
           <td>
             <button class="btn" ng-click="editUser(user.$id)">
-              <span class="glyphicon glyphicon-pencil"></span>  Edit
+              <!-- <span class="glyphicon glyphicon-pencil"></span> -->  Edit
             </button>
           </td>
           <td>
             <button class="btn" ng-click="deleteUser($index)">
-              <i  class="mdi-action-delete left"></i>Delete
+             <!--  <i  class="mdi-action-delete left"></i> -->Delete
             </button>
           </td>
         </tr>
