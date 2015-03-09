@@ -1,199 +1,265 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html ng-app="myApp">
 <head>
-    <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="A layout example that shows off a responsive pricing table.">
+  <!-- <link rel="stylesheet" href = "http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"> -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.95.3/css/materialize.min.css">
 
-    <title>Pricing Table &ndash; Layout Examples &ndash; Pure</title>
-
-    
-
-
-<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
-
-
-
-<!--[if lte IE 8]>
-  
-    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/grids-responsive-old-ie-min.css">
-  
-<![endif]-->
-<!--[if gt IE 8]><!-->
-  
-    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/grids-responsive-min.css">
-  
-<!--<![endif]-->
-
-
-
-
-
-  
-    <!--[if lte IE 8]>
-        <link rel="stylesheet" href="/combo/1.17.30?/css/layouts/pricing-old-ie.css">
-    <![endif]-->
-    <!--[if gt IE 8]><!-->
-        <link rel="stylesheet" href="/pricing.css">
-    <!--<![endif]-->
-  
-
-
-    
-<!--[if lt IE 9]>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.js"></script>
-<![endif]-->
-
-
-
-
+  <script src= "http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+  <script src="https://cdn.firebase.com/js/client/2.0.4/firebase.js"></script>
+  <script src="https://cdn.firebase.com/libs/angularfire/0.8.0/angularfire.min.js"></script>
 
 </head>
-<body>
+
+<body ng-controller="userController">
+  <div class="container">
+      <div class="row">
+        <div class="row">
+          <div class="col s12 m4 l2"><img src="/image/logo.png" height="80px" /></div>
+          <div class="s12 m4 l10">  <h3 class="center-align">GoffeeApp Feedback Form</h3>
+              <p class="lead center-align">Hey there, thank you for giving us the feedback</p></div>
+          </div>
+      </div>
 
 
-<div class="pure-menu pure-menu-open pure-menu-horizontal">
-    <a href="#" class="pure-menu-heading">Your Logo</a>
-    <ul>
-        <li><a href="#">Home</a></li>
-        <li class="pure-menu-selected"><a href="#">Pricing</a></li>
-        <li><a href="#">Contact</a></li>
-    </ul>
+      <hr />
+      Click here to open our application in another tab<br>
+      Click here to watch our overview video.<br>
+
+      <!-- Show this div when the users is logged in -->
+<!--       <div>
+          You are logged in as: {{currentUser.github.displayName}} <br><br>
+          <button class="btn btn-success" ng-click="editFeedback('new')">
+            <span class="glyphicon"></span>Click here to leave feedback.
+        </button>
+        <button class="btn btn-success" ng-click="logout()">
+            <span class="glyphicon"></span>Logout </button>
+        </div> -->
+
+        <!-- Show this div when the user is not logged in -->
+<!--         <div ng-hide="currentUser">
+            <button class="btn btn-success" ng-click="login('github')">
+              <span class="glyphicon glyphicon-user"></span>Login to leave feedback.
+          </button>
+      </div> -->
+
+      <hr />
+      <br  />
+      <div >
+       <h5 ng-show="edit"><b>Leave Your Feedback</b></h5>
+       <button class="btn btn-success" ng-click="editUser('new')">
+          <i class="mdi-content-add-circle left"></i> Leave New Feedback
+      </button>
+       <h3 ng-hide="edit">Edit User:</h3>
+
+       <form class="form-horizontal">
+          <div class="form-group">
+            <i class="mdi-action-account-circle prefix"></i>
+            <label class="col-sm-2 control-label">First Name:</label>
+            <div class="col-sm-10">
+              <input type="text" ng-model="newuser.fName" ng-disabled="!edit" placeholder="First Name">
+          </div>
+      </div>
+      <div class="form-group">
+        <i class="mdi-action-account-circle prefix"></i>
+        <label class="col-sm-2 control-label">Last Name:</label>
+        <div class="col-sm-10">
+          <input type="text" ng-model="newuser.lName" ng-disabled="!edit" placeholder="Last Name">
+      </div>
+  </div>
+  <div class="form-group">
+    <i class="mdi-social-school"></i>
+    <label class="col-sm-2 control-label">School:</label>
+    <div class="col-sm-10">
+      <input type="text" ng-model="newuser.school" ng-disabled="!edit" placeholder="School (e.g SOB)">
+  </div>
+</div>
+<div class="form-group">
+    <i class="mdi-communication-email"></i>
+    <label class="col-sm-2 control-label">Email:</label>
+    <div class="col-sm-10">
+      <input type="text" ng-model="newuser.email" ng-disabled="!edit" placeholder="SMU Email">
+  </div>
+</div>
+<div class="form-group">
+    <i class="mdi-communication-textsms"></i>
+    <label class="col-sm-2 control-label">Feedback:</label>
+    <div class="col-sm-10">
+      <textarea rows="4" ng-model="newuser.feedback" ng-disabled="!edit" placeholder="Feedback"></textarea>
+  </div>
 </div>
 
-<div class="banner">
-    <h1 class="banner-head">
-        Simple Pricing.<br>
-        Try before you buy.
-    </h1>
-</div>
+</form>
 
+<hr>
+
+<!--     <button class="btn btn-success"  ng-click="editUser(new)">
+    <i class="mdi-av-replay left"></i>Reset
+</button> -->
+
+
+
+
+<button class="btn btn-success"  ng-click="save()">
+   <i class="mdi-content-save left"></i>Save Feedback
+</button>
+
+<hr />
+<br />
+<h5><b>Feedbacks</b></h5>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>No.</th>
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>School</th>
+      <th>Email</th>
+      <th>Feedback</th>
+  </tr>
+</thead>
+<tbody>
+    <tr ng-repeat="user in users">
+      <td>{{ $index + 1 }} </td>
+      <td>{{ user.fName }}</td>
+      <td>{{ user.lName }}</td>
+      <td>{{ user.school }}</td>
+      <td>{{ user.email }} </td>
+      <td>{{ user.feedback }} </td>
+<!--       <td>
+        <button class="btn" ng-click="editUser(user.$id)">
+          <span class="glyphicon glyphicon-pencil"></span>  Edit
+      </button>
+  </td>
+  <td>
+    <button class="btn" ng-click="deleteUser($index)">
+      <i  class="mdi-action-delete left"></i>Delete
+  </button>
+</td> -->
+</tr>
+</tbody>
+</table>
 <div>
-    <h4>Thank you for visitng to SMU Paypal site. Click <a href="http://is429-sithu-paypal.herokuapp.com/feedback.html">here </a> to submit the feedback to our website. Thank you!</h4>
-    
-</div>
-
-<div class="l-content">
-    <div class="pricing-tables pure-g">
-        <div class="pure-u-1 pure-u-md-1-3">
-            <div class="pricing-table pricing-table-free">
-                <div class="pricing-table-header">
-                    <h2>Personal</h2>
-
-                    <span class="pricing-table-price">
-                        Free <span>for life</span>
-                    </span>
-                </div>
-
-                <ul class="pricing-table-list">
-                    <li>Free setup</li>
-                    <li>Custom sub-domain</li>
-                    <li>Standard customer support</li>
-                    <li>1GB file storage</li>
-                    <li>1 database</li>
-                    <li>Unlimited bandwidth</li>
-                </ul>
-
-                <button class="button-choose pure-button">Choose</button>
-            </div>
-        </div>
-
-        <div class="pure-u-1 pure-u-md-1-3">
-            <div class="pricing-table pricing-table-biz pricing-table-selected">
-                <div class="pricing-table-header">
-                    <h2>Small Business</h2>
-
-                    <span class="pricing-table-price">
-                        $29.99 <span>per month</span>
-                    </span>
-                </div>
-
-                <ul class="pricing-table-list">
-                    <li>Free setup</li>
-                    <li>Use your own domain</li>
-                    <li>Standard customer support</li>
-                    <li>10GB file storage</li>
-                    <li>5 databases</li>
-                    <li>Unlimited bandwidth</li>
-                </ul>
-
-                <a class="button-choose pure-button" href="payment/initiate/2999">Choose</a>
-            </div>
-        </div>
-
-        <div class="pure-u-1 pure-u-md-1-3">
-            <div class="pricing-table pricing-table-enterprise">
-                <div class="pricing-table-header">
-                    <h2>Enterprise</h2>
-
-                    <span class="pricing-table-price">
-                        $59.99 <span>per month</span>
-                    </span>
-                </div>
-
-                <ul class="pricing-table-list">
-                    <li>Free setup</li>
-                    <li>Use your own domain</li>
-                    <li>Premium customer support</li>
-                    <li>Unlimited file storage</li>
-                    <li>25 databases</li>
-                    <li>Unlimited bandwidth</li>
-                </ul>
-
-                <a class="button-choose pure-button" href="payment/initiate/5999">Choose</a>
-            </div>
-        </div>
-    </div> <!-- end pricing-tables -->
-
-    <div class="information pure-g">
-        <div class="pure-u-1 pure-u-md-1-2">
-            <div class="l-box">
-                <h3 class="information-head">Get started today</h3>
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.
-                </p>
-            </div>
-        </div>
-
-        <div class="pure-u-1 pure-u-md-1-2">
-            <div class="l-box">
-                <h3 class="information-head">Pay monthly or annually</h3>
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ullamco laboris nisi ut aliquip ex ea commodo
-                    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse.
-                </p>
-            </div>
-        </div>
-
-        <div class="pure-u-1 pure-u-md-1-2">
-            <div class="l-box">
-                <h3 class="information-head">24/7 customer support</h3>
-                <p>
-                    Cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-            </div>
-        </div>
-
-        <div class="pure-u-1 pure-u-md-1-2">
-            <div class="l-box">
-                <h3 class="information-head">Cancel your plan anytime</h3>
-                <p>
-                    Duis aute irure dolor in reprehenderit in voluptate velit esse
-                    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                </p>
-            </div>
-        </div>
-    </div> <!-- end information -->
-</div> <!-- end l-content -->
-
-<div class="footer l-box">
-    <p>
-        <a href="#">Try now</a> for 14 days. No credit card required. Header image courtesy of <a href='http://unsplash.com/'>Unsplash</a>.
-    </p>
+    <hr>
+    Previous team feedback form <a href="http://www.google.com" target="_blank">here</a>.
+    <br />
+    Next team feedback form <a href="http://www.google.com"> here</a>.
 </div>
 
 
+<script>
+ var myApp = angular.module("myApp", ["firebase"]);
+ myApp.controller('userController', ['$scope', '$firebase',
 
+    function($scope, $firebase) {
+      $scope.newuser = {};
+      $scope.fName = '';
+      $scope.lName = '';
+      $scope.passw1 = '';
+      $scope.passw2 = '';
+      $scope.school = '';
+      $scope.email = '';
+      $scope.feedback = '';
+
+    //We can replace this with a Firebase url later on.
+    var ref = new Firebase("https://feeback.firebaseio.com/");
+    $scope.users = $firebase(ref.child("user")).$asArray();
+    /*
+    $scope.users = [
+        {id:1, fName:'Hege'  , lName:"Pege" },
+        {id:2, fName:'Kim'   , lName:"Pim" },
+        {id:3, fName:'Jack'  , lName:"Jones" },
+        {id:4, fName:'John'  , lName:"Doe" },
+        {id:5, fName:'Peter' , lName:"Pan" }
+    ];
+    */
+
+    $scope.edit = true;
+    $scope.error = false;
+    $scope.incomplete = false;
+
+
+    $scope.editUser = function(id) {
+      $scope.currentId = id;
+      if (id == 'new') {
+        $scope.edit = true;
+        $scope.incomplete = true;
+        $scope.newuser.fName = '';
+        $scope.newuser.lName = '';
+        $scope.newuser.school = '';
+        $scope.newuser.email = '';
+        $scope.newuser.feedback = '';
+        console.log("new user.");
+    } else {
+        $scope.edit = true;
+        $scope.newuser = $firebase(ref.child("user").child(id)).$asObject();
+        console.log("existing user.");
+    }
+};
+
+$scope.save = function(){
+      //Add new if no index is passed in.
+
+      if($scope.currentId=='new'){
+        //Using the array length as the next index while prototyping.
+        $scope.users.$add($scope.newuser);
+    }
+    else{
+        $scope.newuser.$save();
+    }
+};
+
+// $scope.currentUser = null;
+//     //Check to see if the users is already logged in to Firebase and update currentUser if yes.
+//     var authData = ref.getAuth();
+//     if (authData && authData!={}) {
+//       $scope.currentUser = $firebase(ref.child("user").child(authData.uid)).$asObject();
+//   } else {
+//       console.log("User is logged out");
+//   }
+
+//   $scope.logout = function(loginProvider){
+//     $scope.currentUser = null;
+// }
+
+// $scope.login = function(loginProvider){
+//   ref.authWithOAuthPopup(loginProvider, function(error, authData) {
+//     if (error) {
+//       console.log("Login Failed!", error);
+//   } else {
+//       console.log("Authenticated successfully with payload:", authData);
+//               ref.child("user/"+authData.uid).transaction(function(currentValue) {
+//                   return authData;
+//               });
+//               $scope.currentUser = $firebase(ref.child("user").child(authData.uid)).$asObject();
+//               $scope.users = $firebase(ref.child("feedback")).$asArray();
+//           }
+//       });
+// }
+
+$scope.deleteUser = function(index){
+  $scope.users.$remove(index);
+  console.log("removing "+index);
+}
+
+}]);
+
+</script>
+  <!--Here is a way to take a quick peek at your data.
+  Users: {{users}}<br>
+  newuser: {{newuser}}
+-->
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-55493881-2', 'auto');
+ga('send', 'pageview');
+
+</script>
 
 </body>
 </html>
