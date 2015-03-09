@@ -43,15 +43,24 @@
       </div> -->
 
       <hr />
+
+      <div>
+        Previous team feedback form <a href="https://popcart.herokuapp.com/feedback.html" target="_blank">Team  19</a>.
+        <br />
+        Next team feedback form <a href="http://getxcused.meteor.com/feedback"  target="_blank"> Team 21</a>.
+    </div>
+
+    </hr>
       <br  />
       <div >
        <h5 ng-show="edit"><b>Leave Your Feedback</b></h5>
-       <button class="btn btn-success" ng-click="editUser('new')">
+
+       <button class="btn btn-success" ng-click="editUser('new', hide_table)" ng-init="hide_table=false" ng-model="hide_table">
           <i class="mdi-content-add-circle left"></i> Leave New Feedback
       </button>
        <h3 ng-hide="edit">Edit User:</h3>
 
-       <form class="form-horizontal">
+       <form class="form-horizontal" ng-show="hide_table">
           <div class="form-group">
             <i class="mdi-action-account-circle prefix"></i>
             <label class="col-sm-2 control-label">First Name:</label>
@@ -82,9 +91,21 @@
 </div>
 <div class="form-group">
     <i class="mdi-communication-textsms"></i>
-    <label class="col-sm-2 control-label">Feedback:</label>
+    <label class="col-sm-2 control-label">Feedback #1: What we should start doing?</label>
     <div class="col-sm-10">
       <textarea rows="4" ng-model="newuser.feedback" ng-disabled="!edit" placeholder="Feedback"></textarea>
+  </div>
+  <div class="form-group">
+    <i class="mdi-communication-textsms"></i>
+    <label class="col-sm-2 control-label">Feedback #2: What we should stop doing?</label>
+    <div class="col-sm-10">
+      <textarea rows="4" ng-model="newuser.feedback2" ng-disabled="!edit" placeholder="Feedback"></textarea>
+  </div>
+  <div class="form-group">
+    <i class="mdi-communication-textsms"></i>
+    <label class="col-sm-2 control-label">Feedback #2: What we should continue doing?</label>
+    <div class="col-sm-10">
+      <textarea rows="4" ng-model="newuser.feedback3" ng-disabled="!edit" placeholder="Feedback"></textarea>
   </div>
 </div>
 
@@ -115,7 +136,9 @@
       <th>Last Name</th>
       <th>School</th>
       <th>Email</th>
-      <th>Feedback</th>
+      <th>Feedback#1</th>
+      <th>Feedback#2</th>
+      <th>Feedback#3</th>
   </tr>
 </thead>
 <tbody>
@@ -126,6 +149,8 @@
       <td>{{ user.school }}</td>
       <td>{{ user.email }} </td>
       <td>{{ user.feedback }} </td>
+      <td>{{ user.feedback2 }} </td>
+      <td>{{ user.feedback3 }} </td>
 <!--       <td>
         <button class="btn" ng-click="editUser(user.$id)">
           <span class="glyphicon glyphicon-pencil"></span>  Edit
@@ -139,13 +164,6 @@
 </tr>
 </tbody>
 </table>
-<div>
-    <hr>
-    Previous team feedback form <a href="http://www.google.com" target="_blank">here</a>.
-    <br />
-    Next team feedback form <a href="http://www.google.com"> here</a>.
-</div>
-
 
 <script>
  var myApp = angular.module("myApp", ["firebase"]);
@@ -160,6 +178,8 @@
       $scope.school = '';
       $scope.email = '';
       $scope.feedback = '';
+      $scope.feedback2 = '';
+      $scope.feedback3 = '';
 
     //We can replace this with a Firebase url later on.
     var ref = new Firebase("https://feeback.firebaseio.com/");
@@ -179,7 +199,14 @@
     $scope.incomplete = false;
 
 
-    $scope.editUser = function(id) {
+    $scope.editUser = function(id, state_hidden) {
+        debugger;
+        if(state_hidden) {
+                $scope.hide_table = false;
+        } else {
+            $scope.hide_table = true;
+        }
+
       $scope.currentId = id;
       if (id == 'new') {
         $scope.edit = true;
@@ -189,6 +216,8 @@
         $scope.newuser.school = '';
         $scope.newuser.email = '';
         $scope.newuser.feedback = '';
+        $scope.newuser.feedback2 = '';
+        $scope.newuser.feedback3 = '';
         console.log("new user.");
     } else {
         $scope.edit = true;
@@ -208,6 +237,7 @@ $scope.save = function(){
         $scope.newuser.$save();
     }
 };
+
 
 // $scope.currentUser = null;
 //     //Check to see if the users is already logged in to Firebase and update currentUser if yes.
